@@ -1,6 +1,7 @@
 package com.asusoftware.AutoFlex.controller;
 
 import com.asusoftware.AutoFlex.model.dto.request.BookingRequestDto;
+import com.asusoftware.AutoFlex.model.dto.response.BookingIntervalDto;
 import com.asusoftware.AutoFlex.model.dto.response.BookingResponseDto;
 import com.asusoftware.AutoFlex.service.BookingService;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,17 @@ public class BookingController {
     public ResponseEntity<List<BookingResponseDto>> getForCar(@PathVariable UUID carId) {
         return ResponseEntity.ok(bookingService.getBookingsByCar(carId));
     }
+
+    /**
+     * Get all occupied dates for a car, is used to check if a car is available for booking.
+     * @param carId
+     * @return
+     */
+    @GetMapping("/car/{carId}/occupied")
+    public ResponseEntity<List<BookingIntervalDto>> getOccupiedDates(@PathVariable UUID carId) {
+        return ResponseEntity.ok(bookingService.getOccupiedIntervalsForCar(carId));
+    }
+
 
     @PutMapping("/{id}/status")
     public ResponseEntity<BookingResponseDto> updateStatus(@PathVariable UUID id,
