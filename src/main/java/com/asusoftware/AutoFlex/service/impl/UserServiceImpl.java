@@ -29,9 +29,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDto registerUser(UserRegisterDto dto) {
+    public UserResponseDto registerUser(UserRegisterDto dto, String keycloakId) {
         User user = new User();
         user.setId(UUID.randomUUID());
+        user.setKeycloakId(UUID.fromString(keycloakId));
         user.setEmail(dto.getEmail());
         user.setPassword(dto.getPassword());
         user.setFirstName(dto.getFirstName());

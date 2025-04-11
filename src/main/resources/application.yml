@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://antonio-dev.go.ro:15770/autoflexdb
+    url: jdbc:postgresql://antonio-dev.go.ro:16433/autoflexdb
     username: postgres
     password: password
     driver-class-name: org.postgresql.Driver
@@ -18,15 +18,15 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://antonio-dev.go.ro:8081/keycloak-app/realms/floral-elegance-realm
+          issuer-uri: http://antonio-dev.go.ro:8081/keycloak-app/realms/autoflex-realm
 
 keycloak:
-  realm: floral-elegance-realm
-  resource: floral-elegance-backend
+  realm: autoflex-realm
+  resource: autoflex-backend
   # auth-server-url: http://antonio-dev.go.ro:8081/keycloack-app/realms/gym-management-realm/protocol/openid-connect/auth
   auth-server-url: http://antonio-dev.go.ro:8081/keycloak-app/
   credentials:
-    secret: cVVyk0VfUHGDYdmjIAdYTE9LWO162sOP
+    secret: PyJmrhQ8AvxlBVQXJ1Wov9hswZEGzgep
   admin:
     username: admin
     password: admin
@@ -35,3 +35,9 @@ cors:
   allowed-origins: "*"
   allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
   allowed-headers: "*"
+
+upload:
+  dir: uploads/
+
+external-link:
+  url: "http://localhost:8080/images/"

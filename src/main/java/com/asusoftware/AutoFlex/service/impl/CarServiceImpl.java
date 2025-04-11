@@ -7,19 +7,18 @@ import com.asusoftware.AutoFlex.model.dto.response.CarResponseDto;
 import com.asusoftware.AutoFlex.repository.CarRepository;
 import com.asusoftware.AutoFlex.service.CarService;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.UUID;
+import java.util.*;
 import java.io.File;
 
 
@@ -29,14 +28,25 @@ public class CarServiceImpl implements CarService {
     private final ModelMapper mapper;
     private final Path baseStoragePath = Paths.get("uploads/images");
 
+    @Value("${external-link.url}")
+    private String externalLinkBase;
+
     public CarServiceImpl(CarRepository carRepository, ModelMapper mapper) throws IOException {
         this.carRepository = carRepository;
         this.mapper = mapper;
         Files.createDirectories(baseStoragePath);
     }
 
+    /**
+     * Creates a new car entry in the database and saves the associated images.
+     *
+     * @param dto      The car request DTO containing car details.
+     * @param ownerId  The ID of the owner of the car.
+     * @param images   A list of images to be associated with the car.
+     * @return The created car response DTO.
+     */
     @Override
-    public CarResponseDto createCar(CarRequestDto dto, UUID ownerId) {
+    public CarResponseDto createCar(CarRequestDto dto, UUID ownerId, List<MultipartFile> images) {
         UUID carId = UUID.randomUUID();
         Car car = mapper.map(dto, Car.class);
         car.setId(carId);
@@ -44,30 +54,44 @@ public class CarServiceImpl implements CarService {
         car.setCarStatus(CarStatus.AVAILABLE);
         car.setCreatedAt(LocalDateTime.now());
         car.setUpdatedAt(LocalDateTime.now());
+
+        // Save images and collect their URLs
+        List<String> imagePaths = images.stream()
+                .filter(file -> !file.isEmpty())
+                .map(file -> saveImage(file, carId))
+                .toList();
+
+        car.setImages(imagePaths);
         carRepository.save(car);
-
-        try {
-            Files.createDirectories(baseStoragePath.resolve(carId.toString()));
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to create image folder for car: " + carId);
-        }
-
         return mapper.map(car, CarResponseDto.class);
     }
 
-    public String saveImage(UUID carId, MultipartFile file) {
+    private String saveImage(MultipartFile file, UUID carId) {
+        if (file.isEmpty()) {
+            throw new IllegalArgumentException("Cannot store empty file.");
+        }
         try {
-            if (file.isEmpty()) throw new IllegalArgumentException("Uploaded file is empty");
-            Path carFolder = baseStoragePath.resolve(carId.toString());
-            Files.createDirectories(carFolder);
-            String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
-            Path destination = carFolder.resolve(filename);
-            Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
-            return "/uploads/images/" + carId + "/" + filename;
+            String originalFilename = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            Path directory = Paths.get("uploads/images", carId.toString()).toAbsolutePath().normalize();
+            Files.createDirectories(directory);
+
+            Path destination = directory.resolve(originalFilename).normalize();
+
+            if (!destination.getParent().equals(directory)) {
+                throw new SecurityException("Attempt to store file outside allowed directory.");
+            }
+
+            try (InputStream inputStream = file.getInputStream()) {
+                Files.copy(inputStream, destination, StandardCopyOption.REPLACE_EXISTING);
+            }
+
+            return externalLinkBase + carId + "/" + originalFilename;
+
         } catch (IOException e) {
-            throw new RuntimeException("Failed to store image: " + e.getMessage());
+            throw new RuntimeException("Failed to store file", e);
         }
     }
+
 
     @Override
     public List<CarResponseDto> getAllCars() {

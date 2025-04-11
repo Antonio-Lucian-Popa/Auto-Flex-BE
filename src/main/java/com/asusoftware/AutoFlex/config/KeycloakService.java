@@ -1,5 +1,8 @@
 package com.asusoftware.AutoFlex.config;
 
+import com.asusoftware.AutoFlex.model.dto.UserDto;
+import com.asusoftware.AutoFlex.model.dto.request.LoginDto;
+import com.asusoftware.AutoFlex.model.dto.request.UserRegisterDto;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
@@ -35,7 +38,7 @@ public class KeycloakService {
     @Value("${keycloak.admin.password}")
     private String adminPassword;
 
-    public String createKeycloakUser(UserDto userDTO) {
+    public String createKeycloakUser(UserRegisterDto userDTO) {
         Keycloak keycloak = getKeycloakAdminInstance();
 
         UserRepresentation user = new UserRepresentation();
@@ -45,7 +48,7 @@ public class KeycloakService {
         user.setEmail(userDTO.getEmail());
         user.setEnabled(true);
         user.setEmailVerified(true);
-        user.setRealmRoles(Collections.singletonList(userDTO.getUserType().name()));
+        user.setRealmRoles(Collections.singletonList(userDTO.getUserRole()));
 
         CredentialRepresentation password = new CredentialRepresentation();
         password.setType(CredentialRepresentation.PASSWORD);
@@ -62,9 +65,9 @@ public class KeycloakService {
         }
     }
 
-    public AccessTokenResponse loginUser(String email, String password) {
+    public AccessTokenResponse loginUser(LoginDto loginDto) {
         try {
-            return obtainToken(email, password);
+            return obtainToken(loginDto.getEmail(), loginDto.getPassword());
         } catch (Exception e) {
             throw new RuntimeException("Failed to login user: " + e.getMessage(), e);
         }

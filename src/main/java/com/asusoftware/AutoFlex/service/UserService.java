@@ -1,5 +1,6 @@
 package com.asusoftware.AutoFlex.service;
 
+import com.asusoftware.AutoFlex.model.dto.UserDto;
 import com.asusoftware.AutoFlex.model.dto.request.UserRegisterDto;
 import com.asusoftware.AutoFlex.model.dto.response.UserResponseDto;
 
@@ -10,5 +11,5 @@ import java.util.UUID;
  */
 public interface UserService {
     UserResponseDto getUserById(UUID id);
-    UserResponseDto registerUser(UserRegisterDto dto);
+    UserResponseDto registerUser(UserRegisterDto dto, String keycloakId);
 }
