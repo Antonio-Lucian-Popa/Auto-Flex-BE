@@ -2,17 +2,23 @@ package com.asusoftware.AutoFlex.service.impl;
 
 import com.asusoftware.AutoFlex.model.Car;
 import com.asusoftware.AutoFlex.model.CarStatus;
+import com.asusoftware.AutoFlex.model.FuelType;
+import com.asusoftware.AutoFlex.model.Transmission;
 import com.asusoftware.AutoFlex.model.dto.request.CarRequestDto;
 import com.asusoftware.AutoFlex.model.dto.response.CarResponseDto;
 import com.asusoftware.AutoFlex.repository.CarRepository;
 import com.asusoftware.AutoFlex.service.CarService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -98,6 +104,36 @@ public class CarServiceImpl implements CarService {
         return carRepository.findAll().stream()
                 .map(car -> mapper.map(car, CarResponseDto.class))
                 .toList();
+    }
+
+    @Override
+    public Page<CarResponseDto> filterCars(String search, String location, Transmission transmission, FuelType fuelType,
+                                           BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable) {
+        Specification<Car> spec = Specification.where(null);
+
+        if (search != null && !search.isEmpty()) {
+            spec = spec.and((root, query, cb) -> cb.or(
+                    cb.like(cb.lower(root.get("brand")), "%%%s%%".formatted(search.toLowerCase())),
+                    cb.like(cb.lower(root.get("model")), "%%%s%%".formatted(search.toLowerCase()))
+            ));
+        }
+        if (location != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("location"), location));
+        }
+        if (transmission != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("transmission"), transmission));
+        }
+        if (fuelType != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("fuelType"), fuelType));
+        }
+        if (minPrice != null) {
+            spec = spec.and((root, query, cb) -> cb.ge(root.get("price"), minPrice));
+        }
+        if (maxPrice != null) {
+            spec = spec.and((root, query, cb) -> cb.le(root.get("price"), maxPrice));
+        }
+
+        return carRepository.findAll(spec, pageable).map(car -> mapper.map(car, CarResponseDto.class));
     }
 
     @Override
