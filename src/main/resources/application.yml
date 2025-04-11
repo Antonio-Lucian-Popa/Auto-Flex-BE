@@ -32,7 +32,7 @@ keycloak:
     password: admin
 
 cors:
-  allowed-origins: "*"
+  allowed-origins: "http://localhost:3000"
   allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
   allowed-headers: "*"
 

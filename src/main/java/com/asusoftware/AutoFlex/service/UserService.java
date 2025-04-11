@@ -1,8 +1,10 @@
 package com.asusoftware.AutoFlex.service;
 
 import com.asusoftware.AutoFlex.model.dto.UserDto;
+import com.asusoftware.AutoFlex.model.dto.request.LoginDto;
 import com.asusoftware.AutoFlex.model.dto.request.UserRegisterDto;
 import com.asusoftware.AutoFlex.model.dto.response.UserResponseDto;
+import org.keycloak.representations.AccessTokenResponse;
 
 import java.util.UUID;
 
@@ -11,5 +13,6 @@ import java.util.UUID;
  */
 public interface UserService {
     UserResponseDto getUserById(UUID id);
-    UserResponseDto registerUser(UserRegisterDto dto, String keycloakId);
+    UserResponseDto register(UserRegisterDto dto);
+    AccessTokenResponse login(LoginDto loginDto);
 }

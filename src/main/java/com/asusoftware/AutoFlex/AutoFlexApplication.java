@@ -21,7 +21,8 @@ public class AutoFlexApplication {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**")
-						.allowedOriginPatterns("*") // Include both if needed
+						.allowedOriginPatterns("http://localhost:3000", "https://autoflex.ro")
+						// Include both if needed
 						.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 						.allowedHeaders("*")
 						.exposedHeaders("Authorization")

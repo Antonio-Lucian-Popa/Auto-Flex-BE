@@ -19,19 +19,16 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AuthController {
     private final UserService userService;
-    private final KeycloakService keycloakService;
 
     @PostMapping("/register")
     public ResponseEntity<UserResponseDto> register(@RequestBody UserRegisterDto userDto) {
-        String keycloakId = keycloakService.createKeycloakUser(userDto);
-        userDto.setPassword("protected"); // nu salvăm parola local
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.registerUser(userDto, keycloakId));
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.register(userDto));
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
         try {
-            var tokenResponse = keycloakService.loginUser(loginDto);
+            var tokenResponse = userService.login(loginDto);
             return ResponseEntity.ok(tokenResponse);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
