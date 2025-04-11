@@ -1,6 +1,7 @@
 package com.asusoftware.AutoFlex.controller;
 
 import com.asusoftware.AutoFlex.model.dto.request.BookingRequestDto;
+import com.asusoftware.AutoFlex.model.dto.response.BookingCarDto;
 import com.asusoftware.AutoFlex.model.dto.response.BookingIntervalDto;
 import com.asusoftware.AutoFlex.model.dto.response.BookingResponseDto;
 import com.asusoftware.AutoFlex.service.BookingService;
@@ -30,7 +31,7 @@ public class BookingController {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<List<BookingResponseDto>> getForUser(@AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<List<BookingCarDto>> getForUser(@AuthenticationPrincipal Jwt jwt) {
         UUID clientId = UUID.fromString(jwt.getSubject());
         return ResponseEntity.ok(bookingService.getBookingsByUser(clientId));
     }

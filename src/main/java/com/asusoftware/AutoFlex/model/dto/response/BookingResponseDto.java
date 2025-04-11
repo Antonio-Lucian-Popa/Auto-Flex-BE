@@ -13,6 +13,7 @@ import java.util.UUID;
 public class BookingResponseDto {
     private UUID id;
     private UUID carId;
+    private CarResponseDto car;
     private UUID clientId;
     private LocalDate startDate;
     private LocalDate endDate;
