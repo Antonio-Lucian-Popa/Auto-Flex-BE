@@ -6,6 +6,7 @@ import com.asusoftware.AutoFlex.model.dto.request.UserRegisterDto;
 import com.asusoftware.AutoFlex.model.dto.response.UserResponseDto;
 import com.asusoftware.AutoFlex.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.keycloak.representations.AccessTokenResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,6 +35,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }
     }
+
 
     @GetMapping("/user")
     public ResponseEntity<UserResponseDto> getUser(@AuthenticationPrincipal Jwt jwt) {

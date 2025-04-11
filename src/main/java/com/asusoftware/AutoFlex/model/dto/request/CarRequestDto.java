@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -19,4 +20,5 @@ public class CarRequestDto {
     private String description;
     private List<String> features;
     private List<String> images;
+    private UUID ownerId;
 }

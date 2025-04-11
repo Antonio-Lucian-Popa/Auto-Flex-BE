@@ -43,8 +43,7 @@ public class CarController {
                                                     @RequestPart("images") List<MultipartFile> images,
                                                     @AuthenticationPrincipal Jwt jwt) {
         try {
-            UUID ownerId = UUID.fromString(jwt.getSubject());
-            CarResponseDto response = carService.createCar(dto, ownerId, images);
+            CarResponseDto response = carService.createCar(dto, UUID.fromString(jwt.getSubject()), images);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();

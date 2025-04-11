@@ -1,12 +1,11 @@
 package com.asusoftware.AutoFlex.service.impl;
 
-import com.asusoftware.AutoFlex.model.Car;
-import com.asusoftware.AutoFlex.model.CarStatus;
-import com.asusoftware.AutoFlex.model.FuelType;
-import com.asusoftware.AutoFlex.model.Transmission;
+import com.asusoftware.AutoFlex.model.*;
 import com.asusoftware.AutoFlex.model.dto.request.CarRequestDto;
+import com.asusoftware.AutoFlex.model.dto.response.BasicOwnerDto;
 import com.asusoftware.AutoFlex.model.dto.response.CarResponseDto;
 import com.asusoftware.AutoFlex.repository.CarRepository;
+import com.asusoftware.AutoFlex.repository.UserRepository;
 import com.asusoftware.AutoFlex.service.CarService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,14 +31,16 @@ import java.io.File;
 public class CarServiceImpl implements CarService {
     private final CarRepository carRepository;
     private final ModelMapper mapper;
+    private final UserRepository userRepository;
     private final Path baseStoragePath = Paths.get("uploads/images");
 
     @Value("${external-link.url}")
     private String externalLinkBase;
 
-    public CarServiceImpl(CarRepository carRepository, ModelMapper mapper) throws IOException {
+    public CarServiceImpl(CarRepository carRepository, ModelMapper mapper, UserRepository userRepository) throws IOException {
         this.carRepository = carRepository;
         this.mapper = mapper;
+        this.userRepository = userRepository;
         Files.createDirectories(baseStoragePath);
     }
 
@@ -52,11 +53,14 @@ public class CarServiceImpl implements CarService {
      * @return The created car response DTO.
      */
     @Override
-    public CarResponseDto createCar(CarRequestDto dto, UUID ownerId, List<MultipartFile> images) {
+    public CarResponseDto createCar(CarRequestDto dto, UUID jwtUserId, List<MultipartFile> images) {
         UUID carId = UUID.randomUUID();
         Car car = mapper.map(dto, Car.class);
         car.setId(carId);
-        car.setOwnerId(ownerId);
+        // find user by keycloakId
+        User owner = userRepository.findByKeycloakId(jwtUserId)
+                .orElseThrow(() -> new NoSuchElementException("Owner with ID " + dto.getOwnerId() + " not found"));
+        car.setOwnerId(owner.getId());
         car.setCarStatus(CarStatus.AVAILABLE);
         car.setCreatedAt(LocalDateTime.now());
         car.setUpdatedAt(LocalDateTime.now());
@@ -140,7 +144,22 @@ public class CarServiceImpl implements CarService {
     public CarResponseDto getCarById(UUID id) {
         Car car = carRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Car with ID " + id + " not found"));
-        return mapper.map(car, CarResponseDto.class);
+
+        CarResponseDto dto = mapper.map(car, CarResponseDto.class);
+
+        System.out.println("Car ID: " + car.getId());
+
+        User owner = userRepository.findById(car.getOwnerId())
+                .orElseThrow(() -> new NoSuchElementException("Owner with ID " + car.getOwnerId() + " not found"));
+
+        BasicOwnerDto ownerDto = new BasicOwnerDto();
+        ownerDto.setFirstName(owner.getFirstName());
+        ownerDto.setLastName(owner.getLastName());
+        ownerDto.setCreatedAt(owner.getCreatedAt());
+        ownerDto.setPhoneNumber(owner.getPhoneNumber());
+        dto.setOwner(ownerDto);
+
+        return dto;
     }
 
     @Override

@@ -27,4 +27,5 @@ public class CarResponseDto {
     private Double rating;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private BasicOwnerDto owner;
 }

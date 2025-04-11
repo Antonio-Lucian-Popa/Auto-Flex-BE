@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface CarService {
-    CarResponseDto createCar(CarRequestDto dto, UUID ownerId, List<MultipartFile> images);
+    CarResponseDto createCar(CarRequestDto dto, UUID jwtUserId, List<MultipartFile> images);
     List<CarResponseDto> getAllCars();
     Page<CarResponseDto> filterCars(String search, String location, Transmission transmission, FuelType fuelType,
                                     BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable);
