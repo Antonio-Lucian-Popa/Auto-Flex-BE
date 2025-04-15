@@ -1,17 +1,10 @@
-# Faza de build
-FROM eclipse-temurin:17-jdk-alpine as build
+FROM arm64v8/eclipse-temurin:17-jdk
 
 WORKDIR /app
+
 COPY . .
 
-RUN ./mvnw clean package -DskipTests
+RUN chmod +x mvnw \
+ && ./mvnw clean package -DskipTests
 
-# Faza finală
-FROM eclipse-temurin:17-jdk-alpine
-
-WORKDIR /app
-
-COPY --from=build /app/target/*.jar app.jar
-
-# activează profilul "prod"
-ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "target/AutoFlex-0.0.1-SNAPSHOT.jar"]
