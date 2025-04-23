@@ -15,7 +15,7 @@ public class AutoFlexApplication {
 		SpringApplication.run(AutoFlexApplication.class, args);
 	}
 
-	@Bean
+	/*@Bean
 	public WebMvcConfigurer corsConfigurer() {
 		return new WebMvcConfigurer() {
 			@Override
@@ -31,6 +31,6 @@ public class AutoFlexApplication {
 						.allowCredentials(true);
 			}
 		};
-	}
+	}*/
 
 }
