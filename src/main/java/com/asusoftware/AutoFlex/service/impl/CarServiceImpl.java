@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -48,7 +49,7 @@ public class CarServiceImpl implements CarService {
      * Creates a new car entry in the database and saves the associated images.
      *
      * @param dto      The car request DTO containing car details.
-     * @param ownerId  The ID of the owner of the car.
+     * @param jwtUserId  The ID of the owner of the car.
      * @param images   A list of images to be associated with the car.
      * @return The created car response DTO.
      */
@@ -172,7 +173,17 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public void deleteCar(UUID id) {
+    public void deleteCar(UUID id, UUID jwtUserId) {
+        // Caută mașina după ID și verifică dacă există
+        Car car = carRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Car with ID " + id + " not found"));
+        // find user by keycloakId
+        User owner = userRepository.findByKeycloakId(jwtUserId)
+                .orElseThrow(() -> new NoSuchElementException("Owner not found"));
+
+        if (!car.getOwnerId().equals(owner.getId())) {
+            throw new AccessDeniedException("You are not allowed to delete this car");
+        }
         Path carFolder = baseStoragePath.resolve(id.toString());
         try {
             if (Files.exists(carFolder)) {

@@ -19,5 +19,5 @@ public interface CarService {
                                     BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable);
     CarResponseDto getCarById(UUID id);
     CarResponseDto updateCar(UUID id, CarRequestDto dto);
-    void deleteCar(UUID id);
+    void deleteCar(UUID id, UUID jwtUserId);
 }

@@ -41,4 +41,4 @@ upload:
 
 external-link:
   #url: "http://localhost:8080/images/"
-  url: "http://antonio-dev.go.ro:8081/autoflex-fe/images/"
+  url: "http://antonio-dev.go.ro:8081/autoflex-api/images/"

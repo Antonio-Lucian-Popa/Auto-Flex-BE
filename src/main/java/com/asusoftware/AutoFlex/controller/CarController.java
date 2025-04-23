@@ -89,8 +89,8 @@ public class CarController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('OWNER')")
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
-        carService.deleteCar(id);
+    public ResponseEntity<Void> delete(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
+        carService.deleteCar(id, UUID.fromString(jwt.getSubject()));
         return ResponseEntity.noContent().build();
     }
 }
