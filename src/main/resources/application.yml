@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://antonio-dev.go.ro:16433/autoflexdb
+    url: jdbc:postgresql://antonio-dev.go.ro:15773/autoflexdb
     username: postgres
     password: password
     driver-class-name: org.postgresql.Driver
