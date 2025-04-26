@@ -14,6 +14,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
@@ -29,8 +30,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDto getUserById(UUID id) {
-        User user = userRepository.findById(id).orElseThrow();
+    public UserResponseDto getUserById(UUID jwtUserId) {
+        User user = userRepository.findByKeycloakId(jwtUserId)
+                .orElseThrow(() -> new NoSuchElementException("Owner not found"));
         return mapper.map(user, UserResponseDto.class);
     }
 
