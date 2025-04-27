@@ -16,6 +16,7 @@ public class CarResponseDto {
     private String brand;
     private String model;
     private int year;
+    private int power;
     private String transmission;
     private String fuelType;
     private BigDecimal price;

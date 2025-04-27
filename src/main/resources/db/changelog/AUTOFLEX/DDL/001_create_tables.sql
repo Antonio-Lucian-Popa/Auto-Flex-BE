@@ -22,6 +22,7 @@ CREATE TABLE cars (
     brand VARCHAR(100) NOT NULL,
     model VARCHAR(100) NOT NULL,
     year INTEGER NOT NULL,
+    power INTEGER NOT NULL,
     transmission VARCHAR(20) NOT NULL,
     fuel_type VARCHAR(20) NOT NULL,
     price DECIMAL NOT NULL,

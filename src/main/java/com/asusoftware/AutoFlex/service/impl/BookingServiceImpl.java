@@ -40,7 +40,6 @@ public class BookingServiceImpl implements BookingService {
             throw new IllegalArgumentException("You cannot book your own car.");
         }
 
-        // Verificăm suprapunerea
         boolean hasOverlap = bookingRepository.existsByCarIdAndStatusInAndStartDateLessThanEqualAndEndDateGreaterThanEqual(
                 dto.getCarId(),
                 List.of(BookingStatus.CONFIRMED, BookingStatus.PENDING),
@@ -52,14 +51,14 @@ public class BookingServiceImpl implements BookingService {
             throw new IllegalArgumentException("Selected dates are already booked.");
         }
 
-        // continuăm cu logica de creare booking
         Booking booking = new Booking();
         booking.setId(UUID.randomUUID());
         booking.setCarId(dto.getCarId());
-        // find user by keycloakId
+
         User client = userRepository.findByKeycloakId(clientId)
                 .orElseThrow(() -> new NoSuchElementException("Client not found"));
         booking.setClientId(client.getId());
+
         booking.setStartDate(dto.getStartDate());
         booking.setEndDate(dto.getEndDate());
         booking.setStatus(BookingStatus.PENDING);
@@ -67,8 +66,19 @@ public class BookingServiceImpl implements BookingService {
         booking.setUpdatedAt(LocalDateTime.now());
         booking.setTotalPrice(calculatePrice(dto));
 
-        return mapper.map(bookingRepository.save(booking), BookingResponseDto.class);
+        Booking savedBooking = bookingRepository.save(booking);
+
+        // Mapping manual corect:
+        BookingResponseDto responseDto = mapper.map(savedBooking, BookingResponseDto.class);
+
+        Car car = carRepository.findById(savedBooking.getCarId())
+                .orElseThrow(() -> new NoSuchElementException("Car not found"));
+
+        responseDto.setCar(mapper.map(car, CarResponseDto.class));
+
+        return responseDto;
     }
+
 
 
     private BigDecimal calculatePrice(BookingRequestDto dto) {
