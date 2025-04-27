@@ -13,6 +13,8 @@ public class CarRequestDto {
     private String brand;
     private String model;
     private int year;
+    private int power;
+    private int seats;
     private String transmission;
     private String fuelType;
     private BigDecimal price;
