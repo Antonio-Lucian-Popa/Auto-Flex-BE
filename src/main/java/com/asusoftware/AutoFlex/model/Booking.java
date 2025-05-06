@@ -37,4 +37,6 @@ public class Booking {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    @Column(name = "payment_id")
+    private UUID paymentId;
 }

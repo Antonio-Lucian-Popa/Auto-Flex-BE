@@ -45,4 +45,17 @@ public class User {
 
     @Column(name = "updated_at")
     private Instant updatedAt = Instant.now();
+
+    // Stripe fields
+    @Column(name = "stripe_account_id")
+    private String stripeAccountId;
+
+    @Column(name = "stripe_onboarded")
+    private Boolean stripeOnboarded;
+
+    @Column(name = "stripe_charges_enabled")
+    private Boolean stripeChargesEnabled;
+
+    @Column(name = "stripe_payouts_enabled")
+    private Boolean stripePayoutsEnabled;
 }

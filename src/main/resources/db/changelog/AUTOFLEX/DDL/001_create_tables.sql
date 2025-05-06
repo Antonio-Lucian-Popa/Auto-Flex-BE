@@ -60,3 +60,18 @@ CREATE TABLE reviews (
     comment TEXT,
     created_at TIMESTAMP
 );
+
+CREATE TABLE payments (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES users(id),
+    owner_id UUID NOT NULL REFERENCES users(id),
+    booking_id UUID REFERENCES bookings(id), -- poate fi NULL inițial
+    stripe_payment_intent_id VARCHAR(255) NOT NULL,
+    stripe_checkout_session_id VARCHAR(255),
+    amount DECIMAL NOT NULL,
+    application_fee DECIMAL NOT NULL,
+    currency VARCHAR(10) DEFAULT 'EUR',
+    status VARCHAR(20) NOT NULL, -- ex: PENDING, SUCCEEDED, FAILED
+    created_at TIMESTAMP NOT NULL DEFAULT now(),
+    updated_at TIMESTAMP
+);
