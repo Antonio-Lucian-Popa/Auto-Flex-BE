@@ -18,6 +18,7 @@ import com.stripe.param.AccountCreateParams;
 import com.stripe.param.AccountLinkCreateParams;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -34,17 +35,18 @@ import com.stripe.param.checkout.SessionCreateParams;
 @RequiredArgsConstructor
 public class StripeService {
 
-    @Value("${stripe.secret.key}")
+    @Value("${stripe.secret-key}")
     private String stripeSecretKey;
 
-    @Value("${stripe.webhook.secret}")
+    @Value("${stripe.webhook-secret}")
     private String stripeWebhookSecret;
 
-    @Value("${app.stripe.return-url}")
+    @Value("${stripe.return-url}")
     private String stripeReturnUrl;
 
-    @Value("${app.stripe.refresh-url}")
+    @Value("${stripe.refresh-url}")
     private String stripeRefreshUrl;
+
 
     private final PaymentRepository paymentRepository;
     private final BookingRepository bookingRepository;

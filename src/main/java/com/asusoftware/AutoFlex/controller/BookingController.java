@@ -1,5 +1,6 @@
 package com.asusoftware.AutoFlex.controller;
 
+import com.asusoftware.AutoFlex.model.dto.BookingCheckoutDetailsDto;
 import com.asusoftware.AutoFlex.model.dto.request.BookingRequestDto;
 import com.asusoftware.AutoFlex.model.dto.response.BookingCarDto;
 import com.asusoftware.AutoFlex.model.dto.response.BookingIntervalDto;
@@ -57,6 +58,11 @@ public class BookingController {
     public ResponseEntity<BookingResponseDto> updateStatus(@PathVariable UUID id,
                                                            @RequestParam String status) {
         return ResponseEntity.ok(bookingService.updateBookingStatus(id, status));
+    }
+
+    @GetMapping("/{bookingId}/checkout-details")
+    public ResponseEntity<BookingCheckoutDetailsDto> getCheckoutDetails(@PathVariable UUID bookingId) {
+        return ResponseEntity.ok(bookingService.getCheckoutDetails(bookingId));
     }
 }
 

@@ -1,5 +1,6 @@
 package com.asusoftware.AutoFlex.service;
 
+import com.asusoftware.AutoFlex.model.dto.BookingCheckoutDetailsDto;
 import com.asusoftware.AutoFlex.model.dto.request.BookingRequestDto;
 import com.asusoftware.AutoFlex.model.dto.response.BookingCarDto;
 import com.asusoftware.AutoFlex.model.dto.response.BookingIntervalDto;
@@ -13,6 +14,7 @@ import java.util.UUID;
  */
 public interface BookingService {
     BookingResponseDto createBooking(UUID clientId, BookingRequestDto dto);
+    BookingCheckoutDetailsDto getCheckoutDetails(UUID bookingId);
     List<BookingCarDto> getBookingsByUser(UUID clientId);
     List<BookingResponseDto> getBookingsByCar(UUID carId);
     List<BookingIntervalDto> getOccupiedIntervalsForCar(UUID carId);

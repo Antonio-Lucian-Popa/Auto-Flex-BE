@@ -1,6 +1,7 @@
 package com.asusoftware.AutoFlex.service.impl;
 
 import com.asusoftware.AutoFlex.model.*;
+import com.asusoftware.AutoFlex.model.dto.BookingCheckoutDetailsDto;
 import com.asusoftware.AutoFlex.model.dto.request.BookingRequestDto;
 import com.asusoftware.AutoFlex.model.dto.response.BookingCarDto;
 import com.asusoftware.AutoFlex.model.dto.response.BookingIntervalDto;
@@ -187,4 +188,29 @@ public class BookingServiceImpl implements BookingService {
                 .orElse(false);
     }
 
+    public BookingCheckoutDetailsDto getCheckoutDetails(UUID bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+        Car car = carRepository.findById(booking.getCarId())
+                .orElseThrow(() -> new RuntimeException("Car not found"));
+
+        User owner = userRepository.findById(car.getOwnerId())
+                .orElseThrow(() -> new RuntimeException("Owner not found"));
+
+        if (owner.getStripeAccountId() == null || owner.getStripeAccountId().isEmpty()) {
+            throw new RuntimeException("Owner does not have a Stripe account");
+        }
+
+        long amountCents = booking.getTotalPrice().multiply(BigDecimal.valueOf(100)).longValue();
+        long feeCents = Math.round(amountCents * 0.10); // 10% platform fee
+
+        return new BookingCheckoutDetailsDto(
+                booking.getClientId(),
+                owner.getId(),
+                owner.getStripeAccountId(),
+                amountCents,
+                feeCents
+        );
+    }
 }

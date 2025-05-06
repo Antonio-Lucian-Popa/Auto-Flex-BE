@@ -17,4 +17,8 @@ public class UserResponseDto {
     private String role;
     private Instant createdAt;
     private Instant updatedAt;
+    private String stripeAccountId;
+    private Boolean stripeOnboarded;
+    private Boolean stripeChargesEnabled;
+    private Boolean stripePayoutsEnabled;
 }

@@ -1,4 +1,4 @@
-package com.asusoftware.AutoFlex.payment.contorller;
+package com.asusoftware.AutoFlex.payment.controller;
 
 import com.asusoftware.AutoFlex.payment.model.dto.CheckoutRequestDto;
 import com.asusoftware.AutoFlex.payment.service.StripeService;
